@@ -34,9 +34,11 @@ function loadPlanetsata() {
     });
 }
 
-
+function getAllPlanets() {
+    return habitablePlanets;
+}
 
 module.exports = {
     loadPlanetsata,
-    planets: habitablePlanets,
+    getAllPlanets,
 };
