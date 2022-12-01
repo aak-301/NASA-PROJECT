@@ -1,6 +1,6 @@
 ## NASA Project 
 
-Developed using Nodejs and Reactjs
+Developed using Nodejs and Reactjs.
 
 ## Project Architecture
 
