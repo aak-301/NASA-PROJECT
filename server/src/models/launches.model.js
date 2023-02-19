@@ -1,8 +1,10 @@
 const launchesDatabase = require('./launches.mongo');
+const planets = require('./planets.mongo');
 
 // const launches = new Map();
 
-let latestFlightNumber = 100;
+// let latestFlightNumber = 100;
+const DEFAULT_FLIGHT_NUMBER = 100;
 
 const launch = {
     flightNumber: 100,
@@ -23,6 +25,15 @@ function existLaunchWithId(launchId) {
     return launches.has(launchId);
 }
 
+async function getLatestFlightNumber() {
+    const latestLaunch = await launchesDatabase.findOne().sort('-flightNumber');
+
+    if (!latestLaunch) {
+        return DEFAULT_FLIGHT_NUMBER;
+    }
+    return latestLaunch.flightNumber;
+}
+
 async function getAllLaunches() {
     return await launchesDatabase.find({}, {
         '_id': 0, "__v": 0
@@ -30,21 +41,32 @@ async function getAllLaunches() {
 }
 
 async function saveLaunch(launch) {
-    await launchesDatabase.updateOne({
+    const planet = await planets.findOne({
+        keplerName: launch.target
+    });
+
+    if (!planet) {
+        throw new Error('No matching panet found');
+    }
+
+    await launchesDatabase.findOneAndUpdate({
         flightNumber: launch.flightNumber,
     }, launch, {
         upsert: true
     })
 }
 
-function addNewLaunch(launch) {
-    latestFlightNumber++;
-    launches.set(latestFlightNumber, Object.assign(launch, {
+async function scheduleNewLaunch(launch) {
+
+    const newFlightNumber = await getLatestFlightNumber() + 1;
+    const newLaunch = Object.assign(launch, {
         success: true,
         upcoming: true,
         customers: ['ISRO'],
-        flightNumber: latestFlightNumber,
-    }));
+        flightNumber: newFlightNumber,
+    });
+
+    await saveLaunch(newLaunch);
 }
 
 function abortLaunchById(launchId) {
@@ -57,6 +79,6 @@ function abortLaunchById(launchId) {
 module.exports = {
     existLaunchWithId,
     getAllLaunches,
-    addNewLaunch,
+    scheduleNewLaunch,
     abortLaunchById,
 }
