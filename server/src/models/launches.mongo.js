@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const launchesSchema = new mongoose.Schema({
 
-    flightNumber: { tye: Number, required: true },
-    launchDate: { tye: Date, required: true },
-    mission: { tye: String, required: true },
-    rocket: { tye: String, required: true },
+    flightNumber: { type: Number, required: true },
+    launchDate: { type: Date, required: true },
+    mission: { type: String, required: true },
+    rocket: { type: String, required: true },
     target: { type: String, required: true },
     customers: [String],
     upcoming: {
