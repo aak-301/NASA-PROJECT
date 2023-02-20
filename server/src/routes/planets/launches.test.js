@@ -11,13 +11,13 @@ describe('Launches API', () => {
         await mongoDisconnect();
     })
 
-    describe('Test GET /launches', () => {
+    describe('Test GET /v1/launches', () => {
         test('It should respond with 200', async () => {
-            const response = await request(app).get('/launches').expect(200);
+            const response = await request(app).get('/v1/launches').expect(200);
         })
     })
 
-    describe('Test POST /launches', () => {
+    describe('Test POST /v1/launches', () => {
         const completeLaunchData = {
             mission: 'USS Enterprise',
             rocket: 'NCC 1701-D',
@@ -39,7 +39,7 @@ describe('Launches API', () => {
         };
 
         test('It should respond with 201 success', async () => {
-            const response = await request(app).post('/launches').send(completeLaunchData).expect('Content-Type', /json/)
+            const response = await request(app).post('/v1/launches').send(completeLaunchData).expect('Content-Type', /json/)
                 .expect(201)
 
             const reqDate = new Date(completeLaunchData.launchDate).valueOf();
@@ -49,7 +49,7 @@ describe('Launches API', () => {
             expect(response.body).toMatchObject(launchDataWithoutDate);
         });
         test('It should catch missing required properties', async () => {
-            const response = await request(app).post('/launches').send(launchDataWithoutDate).expect('Content-Type', /json/)
+            const response = await request(app).post('/v1/launches').send(launchDataWithoutDate).expect('Content-Type', /json/)
                 .expect(400);
 
             expect(response.body).toStrictEqual({
@@ -57,7 +57,7 @@ describe('Launches API', () => {
             })
         });
         test('It should catch invalid dates', async () => {
-            const response = await request(app).post('/launches').send(launchDataWithInvalidDate).expect('Content-Type', /json/)
+            const response = await request(app).post('/v1/launches').send(launchDataWithInvalidDate).expect('Content-Type', /json/)
                 .expect(400);
 
             expect(response.body).toStrictEqual({
