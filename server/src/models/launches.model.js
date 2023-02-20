@@ -20,7 +20,7 @@ saveLaunch(launch);
 const SPACEX_API_URL = "https://api.spacexdata.com/v4/launches/query";
 
 async function populateLaunches() {
-    
+
 
     console.log("Downloading Lanch data....");
     const response = await axios.post(SPACEX_API_URL,
@@ -75,8 +75,8 @@ async function loadLaunchData() {
     if (firstLaunch) {
         console.log('Launch data already loaded!');
     }
-    else{
-       await populateLaunches();
+    else {
+        await populateLaunches();
     }
 }
 
@@ -99,10 +99,12 @@ async function getLatestFlightNumber() {
     return latestLaunch.flightNumber;
 }
 
-async function getAllLaunches() {
+async function getAllLaunches(skip, limit) {
     return await launchesDatabase.find({}, {
         '_id': 0, "__v": 0
-    });
+    })
+        .skip(skip)
+        .limit(limit);
 }
 
 async function saveLaunch(launch) {
