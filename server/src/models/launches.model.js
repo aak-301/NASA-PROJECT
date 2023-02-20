@@ -60,7 +60,8 @@ async function populateLaunches() {
             customers: customers,
         };
 
-        console.log(`${launch.flightNumber}    ${launch.mission}`)
+        console.log(`${launch.flightNumber}    ${launch.mission}`);
+        await saveLaunch(launch);
     }
 }
 
@@ -105,14 +106,6 @@ async function getAllLaunches() {
 }
 
 async function saveLaunch(launch) {
-    const planet = await planets.findOne({
-        keplerName: launch.target
-    });
-
-    if (!planet) {
-        throw new Error('No matching panet found');
-    }
-
     await launchesDatabase.findOneAndUpdate({
         flightNumber: launch.flightNumber,
     }, launch, {
@@ -121,7 +114,13 @@ async function saveLaunch(launch) {
 }
 
 async function scheduleNewLaunch(launch) {
+    const planet = await planets.findOne({
+        keplerName: launch.target
+    });
 
+    if (!planet) {
+        throw new Error('No matching panet found');
+    }
     const newFlightNumber = await getLatestFlightNumber() + 1;
     const newLaunch = Object.assign(launch, {
         success: true,
