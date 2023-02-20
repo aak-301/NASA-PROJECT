@@ -1,6 +1,8 @@
 
 const mongoose = require('mongoose');
 
+require('dotenv').config();
+
 const mongoURL = process.env.MONGO_URL;
 
 mongoose.connection.on('open', () => {
@@ -11,13 +13,13 @@ mongoose.connection.on('error', (err) => {
     console.error(err);
 })
 
-async function mongoConnect(){
+async function mongoConnect() {
     mongoose.set("strictQuery", false);
     await mongoose.connect(mongoURL);
 }
 
-async function mongoDisconnect(){
+async function mongoDisconnect() {
     await mongoose.disconnect();
 }
 
-module.exports = {mongoConnect,mongoDisconnect};
+module.exports = { mongoConnect, mongoDisconnect };
