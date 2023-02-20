@@ -1,9 +1,6 @@
 const launchesDatabase = require('./launches.mongo');
 const planets = require('./planets.mongo');
 
-// const launches = new Map();
-
-// let latestFlightNumber = 100;
 const DEFAULT_FLIGHT_NUMBER = 100;
 
 const launch = {
@@ -19,10 +16,11 @@ const launch = {
 
 saveLaunch(launch);
 
-// launches.set(launch.flightNumber, launch);
 
-function existLaunchWithId(launchId) {
-    return launches.has(launchId);
+async function existLaunchWithId(launchId) {
+    return await launchesDatabase.findOne({
+        flightNumber: launchId
+    });
 }
 
 async function getLatestFlightNumber() {
@@ -69,11 +67,15 @@ async function scheduleNewLaunch(launch) {
     await saveLaunch(newLaunch);
 }
 
-function abortLaunchById(launchId) {
-    const aborted = launches.get(launchId);
-    aborted.upcoming = false;
-    aborted.success = false;
-    return aborted;
+async function abortLaunchById(launchId) {
+    const aborted = await launchesDatabase.updateOne({ flightNumber: launchId }, {
+        upcoming: false,
+        success: false,
+    });
+
+    console.log(aborted);
+
+    return aborted.acknowledged && aborted.matchedCount===1;
 }
 
 module.exports = {
